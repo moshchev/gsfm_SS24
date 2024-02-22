@@ -10,7 +10,11 @@ python = "^3.10"
 pandas = "^2.2.0"
 numpy = "^1.26.4"
 polars = "^0.20.10"
+jupyter = "^1.0.0"
 
+
+[tool.poetry.group.dev.dependencies]
+pandas = "^2.2.0"
 
 [build-system]
 requires = ["poetry-core"]
