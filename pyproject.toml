@@ -11,6 +11,7 @@ pandas = "^2.2.0"
 numpy = "^1.26.4"
 polars = "^0.20.10"
 jupyter = "^1.0.0"
+wrds = "^3.2.0"
 
 
 [tool.poetry.group.dev.dependencies]
