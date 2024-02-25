@@ -2,9 +2,9 @@
 
 # Introduction
 
-# How to use the repo
+_How to use the repo_
 
-# Data Sources and Data Guides
+## Data Sources and Data Guides
 
 Analyst Forecasts and Actuals:
 https://wrds-www.wharton.upenn.edu/pages/get-data/ibes-thomson-reuters/ibes-academic/detail-history/actuals/
