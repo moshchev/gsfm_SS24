@@ -4,6 +4,19 @@
 
 _How to use the repo_
 
+## Model specification
+
+__Draft__:
+$$Acc_{ijt} = \alpha[i] + \beta_{brsz} * BRSZ_{ijt}  + \beta_{BCOV} * BCOV_{ijt} + \beta_{EXP} * EXP_{ijt} + \beta_{SURP} * SURP_{ijt} + \beta_{PCOM} * PCOM_{}$$
+
+where,
+- $Acc_{ijt}$: Proportional Mean Absolute Forecast Error (PMAFE) of analyst i for company j in fiscal year t
+- $BRSZ_{ijt}$: Broker size analyst i works at (belongs to the Top 50) / or log broker size
+- $BCOV_{ijt}$: Coverage as number of analysts at broker of analyst i following company j in fiscal year t
+- $EXP_{ijt}$: Experience of analyst i as number of forecasts issued till current fiscal year t
+- $SURP_{ijt}$: Previous year mean surprise of analyst i issued forecasts for company j in fiscal year t-1 (lag feature)
+- $PCOM_{ijt}$: Portfolio complexity of analyst i, as the number of distinct companies j / industries followed in year t
+
 ## Data Sources and Data Guides
 
 | Data Source | Link |
