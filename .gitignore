@@ -1,3 +1,4 @@
 *.csv
 .DS*
 processed
+*.zip
