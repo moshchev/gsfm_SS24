@@ -122,4 +122,15 @@ def calculate_pmafe(df):
 
 #### COLLAPSE DATA ####
 
+def collapse_processed_df(df):
+    """_summary_
+    This function collapses the input df into the final df so that one row should correspond to one analyst 
+    i's forecast of firm j in fiscal year t with accuracy measure pmafe and other relevant features
+    """
+
+
+
+
+#### DATA SCIENCE FUNCTIONS ####
+
 
