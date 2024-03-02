@@ -14,8 +14,9 @@ def load_datasets():
     """
 
     # file_path_ibes = "../data/raw/ibes-forecasts.zip"
-    df_forecasts = pd.read_parquet("../data/raw/ibes-forecasts.parquet")
-    link_to_crisp = pd.read_parquet('../data/raw/crisp-computsat-link.parquet')
+    # data/raw/ibes-forecasts.parquet
+    df_forecasts = pd.read_parquet('data/raw/ibes-forecasts.parquet')
+    link_to_crisp = pd.read_parquet('data/raw/crisp-computsat-link.parquet')
     # TODO join tables?? or perform it later
 
     return df_forecasts
@@ -23,11 +24,11 @@ def load_datasets():
 
 ### Service functions
 def convert_to_datetime(df):
-    columns_to_convert = ['fpedats','revdats', "anndats", 'anndats_act']
+    columns_to_convert = ['fpedats','revdats', 'anndats', 'anndats_act']
     for column in columns_to_convert:
         df[column] = pd.to_datetime(df[column])
         
-        return df
+    return df
 
 
 #### PREPROCESSING FUNCTIONS ####
@@ -45,9 +46,11 @@ def preprocessing_ibes(df:pd.DataFrame):
     4. Filter forecasts
         4.1 Include only forecasts issued no earlier than 1 year ahead and no later than 30 days before fiscal year end
         4.2 Exclude forecasts for companies which only one analyst provides a forecast #TODO double check if we need to compute nr of forecasts
-        4.3 Exclude all analysts appearing in the initial 2-3 years of the dataset # TODO will replaced with the analyst experience
+        4.3 Exclude all analysts appearing in the initial 2-3 years of the dataset #TODO will replaced with the analyst experience
 
     5. Rename columns.
+
+    6. Join preprocessed data
 
     Args:
         df (pandas.DataFrame): Input DataFrame containing the data to be preprocessed.
@@ -57,32 +60,40 @@ def preprocessing_ibes(df:pd.DataFrame):
     """
     
     # #1 lower case column names
-    df_forecasts = df.rename(columns={col: col.lower() for col in df_forecasts.columns})
+    df = df.rename(columns={col: col.lower() for col in df.columns})
     
     # #2 drop columns
-    df_forecasts = df_forecasts.drop(columns=["fpi","measure","cusip"])
-    df_forecasts = df_forecasts.dropna(subset=['actual_eps'])
-    df_forecasts = df_forecasts.dropna(subset=['estimated_eps'])
+    df = df.drop(columns=["fpi","measure","cusip"])
+    df = df.dropna(subset=['actual'])
+    df = df.dropna(subset=['value'])
     
     # #3 change format
-    df_forecasts = convert_to_datetime(df_forecasts)
-    
+    df = convert_to_datetime(df)
+
     # #4 Filter columns
     # 4.1 Include only forecasts issued no earlier than 1 year ahead and no later than 30 days before fiscal year end
-    df_forecasts['difference_date'] = df_forecasts['fpedats'] - df_forecasts['anndats']
-    df_forecasts = df_forecasts[(df_forecasts['difference_date']> pd.Timedelta(days=30))&(df['difference_date']<pd.Timedelta(days=365))]
+    df['difference_date'] = df['fpedats'] - df['anndats']
+    df = df[(df['difference_date']> pd.Timedelta(days=30))&(df['difference_date']<pd.Timedelta(days=365))]
 
     # 4.2 
     # TODO
 
     # #5 Rename columns
-    df_forecasts = df.rename(columns={"ticker": "ibes_ticker_pk", "oftic": "official_ticker", "analys": "analyst", 
+    df = df.rename(columns={"ticker": "ibes_ticker_pk", "oftic": "official_ticker", "analys": "analyst", 
                                 "value": "estimated_eps", "fpedats": "fiscal_period_ending", 
                                 "revdats": "revision_date", "anndats": "announce_date", 
                                 "actual": "actual_eps", "anndats_act": "announce_date_actual",
                                 "difference_date": "forecast_horizon"})
 
-    return df_forecasts
+    # #6 Joins
+    # 6.1 Analyst experience 
+    # load data
+    df['analyst_year'] = df.announce_date.dt.year
+    experience = pd.read_parquet('data/processed/analyst_experience.parquet')
+    df = pd.merge(left=df, right=experience, how='left', left_on=['analyst','analyst_year'], right_on=['analyst', 'year'])
+    df.drop(columns=['analyst_year', 'year'], inplace=True)
+
+    return df
 
 
 # TODO not sure if needed anymore
@@ -133,10 +144,44 @@ def collapse_processed_df(df):
     This function collapses the input df into the final df so that one row should correspond to one analyst 
     i's forecast of firm j in fiscal year t with accuracy measure pmafe and other relevant features
     """
+    
+    return df
 
 
+def top_10_brokerage(df):
+    """
+    Function to add a dummy for each analyst that is employed by a brockerage that belongs to the 
+    Top 10 % of brokerages by analyst count in year t
+    Set to 1 if analyst i is employed by a firm in the top quantile during year t (fpedats_year), and set to 0 otherwise
+    broker = df["estimator"]
+    analyst = df["analyst"]
+    analyst_count = Count of analysts per brokerage in year t
+    Output: this function adds a new column to the dataframe called "top_10_brokerage" with the dummy variable
+    """
+    # setup
+    df["top_10_brokerage"] = 0
+    # get top 10 % of brokerages by analyst count per year
+    top_10 = df.groupby('fpedats_year')['analyst_count'].quantile(0.9)
+    # loop through each year
+    # TODO if a year will be needed for experience as well, mb replace
+    for year in df['fpedats_year'].unique():
+        # get the top 10 % of brokerages by analyst count for the year
+        top_10_brokerages = df[df['fpedats_year'] == year][df['analyst_count'] >= top_10[year]]['estimator']
+        # set the dummy to 1 if the brokerage is in the top 10 % of brokerages by analyst count
+        df.loc[df['estimator'].isin(top_10_brokerages.index), 'top_10_brokerage'] = 1    
+    
+    return df
 
 
 #### DATA SCIENCE FUNCTIONS ####
 
 
+
+df_forecast = load_datasets()
+df_forecast = preprocessing_ibes(df_forecast)
+df_forecast = calculate_pmafe(df_forecast)
+df_forecast = top_10_brokerage(df_forecast)
+print(df_forecast.head(10))
+# data/raw/ibes-forecasts.parquet
+# data= pd.read_parquet('data/raw/ibes-forecasts.parquet')
+# print(data.head(10))
