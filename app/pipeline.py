@@ -12,23 +12,41 @@ def load_datasets():
     df_forecasts (pandas.DataFrame): DataFrame containing the IBES forecasts data.
     df_company (pandas.DataFrame): DataFrame containing the company data.
     """
-    file_path_ibes = "../data/dataset2014-2022-v4.zip"
-    file_path_sic = "data/dataset-company-industry-data-v1.csv"
-    df_forecasts = pd.read_csv(file_path_ibes)
-    df_company = pd.read_csv(file_path_sic)
-    
-    return df_forecasts, df_company
+
+    # file_path_ibes = "../data/raw/ibes-forecasts.zip"
+    df_forecasts = pd.read_parquet("../data/raw/ibes-forecasts.parquet")
+    link_to_crisp = pd.read_parquet('../data/raw/crisp-computsat-link.parquet')
+    # TODO join tables?? or perform it later
+
+    return df_forecasts
+
+
+### Service functions
+def convert_to_datetime(df):
+    columns_to_convert = ['fpedats','revdats', "anndats", 'anndats_act']
+    for column in columns_to_convert:
+        df[column] = pd.to_datetime(df[column])
+        
+        return df
 
 
 #### PREPROCESSING FUNCTIONS ####
 
-def preprocessing_ibes(df):
+def preprocessing_ibes(df:pd.DataFrame):
     """
     Preprocesses the input DataFrame by performing the following steps:
     1. Lowercase column names.
+
     2. Drop specified columns.
+        2.1 Delete rows with actual_eps = NAN or estimated_eps = NAN
+
     3. Convert specified columns to datetime format.
-    4. Filter forecasts based on a specific period.
+
+    4. Filter forecasts
+        4.1 Include only forecasts issued no earlier than 1 year ahead and no later than 30 days before fiscal year end
+        4.2 Exclude forecasts for companies which only one analyst provides a forecast #TODO double check if we need to compute nr of forecasts
+        4.3 Exclude all analysts appearing in the initial 2-3 years of the dataset # TODO will replaced with the analyst experience
+
     5. Rename columns.
 
     Args:
@@ -38,45 +56,36 @@ def preprocessing_ibes(df):
         pandas.DataFrame: Preprocessed DataFrame.
     """
     
-    # lower case column names
+    # #1 lower case column names
     df_forecasts = df.rename(columns={col: col.lower() for col in df_forecasts.columns})
     
-    # drop columns
-    columns_to_drop = ["fpi","measure","cusip"]
-    df_forecasts = df_forecasts.drop(columns=columns_to_drop)
-    
+    # #2 drop columns
+    df_forecasts = df_forecasts.drop(columns=["fpi","measure","cusip"])
     df_forecasts = df_forecasts.dropna(subset=['actual_eps'])
     df_forecasts = df_forecasts.dropna(subset=['estimated_eps'])
     
-    
-    def convert_to_datetime(df):
-        columns_to_convert = ['fpedats','revdats', "anndats", 'anndats_act']
-        for column in columns_to_convert:
-            df[column] = pd.to_datetime(df[column])
-            return df
-    
+    # #3 change format
     df_forecasts = convert_to_datetime(df_forecasts)
     
-    def filter_forecasts_period(df):
-        df['difference_date'] = df['fpedats'] - df['anndats']
-        df = df[(df['difference_date']> pd.Timedelta(days=30))&(df['difference_date']<pd.Timedelta(days=365))]
-        return df
-    
-    df_forecasts = filter_forecasts_period(df_forecasts)
-    
-    def rename_columns(df):
-        df_forecasts = df.rename(columns={"ticker": "ibes_ticker_pk", "oftic": "official_ticker", "analys": "analyst", 
-                                  "value": "estimated_eps", "fpedats": "fiscal_period_ending", 
-                                  "revdats": "revision_date", "anndats": "announce_date", 
-                                  "actual": "actual_eps", "anndats_act": "announce_date_actual",
-                                  "difference_date": "forecast_horizon"})
-        return df_forecasts
-    
-    df_forecasts = rename_columns(df_forecasts)
-    
+    # #4 Filter columns
+    # 4.1 Include only forecasts issued no earlier than 1 year ahead and no later than 30 days before fiscal year end
+    df_forecasts['difference_date'] = df_forecasts['fpedats'] - df_forecasts['anndats']
+    df_forecasts = df_forecasts[(df_forecasts['difference_date']> pd.Timedelta(days=30))&(df['difference_date']<pd.Timedelta(days=365))]
+
+    # 4.2 
+    # TODO
+
+    # #5 Rename columns
+    df_forecasts = df.rename(columns={"ticker": "ibes_ticker_pk", "oftic": "official_ticker", "analys": "analyst", 
+                                "value": "estimated_eps", "fpedats": "fiscal_period_ending", 
+                                "revdats": "revision_date", "anndats": "announce_date", 
+                                "actual": "actual_eps", "anndats_act": "announce_date_actual",
+                                "difference_date": "forecast_horizon"})
+
     return df_forecasts
 
 
+# TODO not sure if needed anymore
 def preprocessing_compustat(df):
     # reduce to highest level of SIC code
     df.loc[df['sic'].isna(), 'sic'] = -1 
@@ -86,7 +95,7 @@ def preprocessing_compustat(df):
     
 #### ADD DV AND FEATURE FUNCTIONS ####
 
-def calculate_pmafe(df):
+def calculate_pmafe(df:pd.DataFrame) -> pd.DataFrame:
     """
     This function first calculates the absolute forecast error for each analyst i forecast of firm j in year t
     If analyst i has multiple forecasts for firm j in year t, the function calculates the average forecast error
@@ -98,9 +107,9 @@ def calculate_pmafe(df):
     - afe_mean_firm_j: the overall forecast error for each firm j in year t
     - pmafe: the PMAFE for each analyst i forecast of firm j in year t
     """
+
     # Step 1: Calculate the average absolute forecast error for each analyst i forecast of firm j in year t
     df['afe_analyst_i'] = np.abs(df['estimated_eps'] - df['actual_eps'])
-    
     df_grouped = df.groupby(['ibes_ticker_pk', 'analyst', 'fiscal_period_ending']).agg({'afe_analyst_i': 'mean'}).reset_index()
     df_grouped = df_grouped.rename(columns={'afe_analyst_i': 'afe_analyst_i_avg'})
     df = pd.merge(df, df_grouped, on=['ibes_ticker_pk', 'analyst', 'fiscal_period_ending'], how='left')
@@ -112,9 +121,6 @@ def calculate_pmafe(df):
     df['pmafe'] = (df['afe_analyst_i_avg'] - df['afe_mean_firm_j']) / df['afe_mean_firm_j']
     
     return df
-
-
-
 
 
 
