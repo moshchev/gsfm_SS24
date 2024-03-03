@@ -166,12 +166,12 @@ def top_10_brokerage(df):
     # setup
     df["top_10_brokerage"] = 0
     # get top 10 % of brokerages by analyst count per year
-    top_10 = df.groupby('fpedats_year')['analyst_count'].quantile(0.9)
+    top_10 = df.groupby('fpedats_year')['analyst_following_j'].quantile(0.9)
     # loop through each year
     # TODO if a year will be needed for experience as well, mb replace
     for year in df['fpedats_year'].unique():
         # get the top 10 % of brokerages by analyst count for the year
-        top_10_brokerages = df[df['fpedats_year'] == year][df['analyst_count'] >= top_10[year]]['estimator']
+        top_10_brokerages = df[df['fpedats_year'] == year][df['analyst_following_j'] >= top_10[year]]['estimator']
         # set the dummy to 1 if the brokerage is in the top 10 % of brokerages by analyst count
         df.loc[df['estimator'].isin(top_10_brokerages.index), 'top_10_brokerage'] = 1    
     
