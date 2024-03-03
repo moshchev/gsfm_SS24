@@ -140,14 +140,17 @@ def calculate_pmafe(df:pd.DataFrame) -> pd.DataFrame:
 
 
 #### COLLAPSE DATA ####
-
 def collapse_processed_df(df):
     """_summary_
-    This function collapses the input df into the final df so that one row should correspond to one analyst 
+    This function collapses/groups the input df into the final df so that one row should correspond to one analyst 
     i's forecast of firm j in fiscal year t with accuracy measure pmafe and other relevant features
     """
-    
-    return df
+    min_forecast = df.groupby(['ibes_ticker_pk', 'analyst', 'fiscal_period_ending'])['forecast_horizon'].idxmin()
+    min_forecast_df = df.loc[min_forecast]
+    min_forecast_df['analyst_following_j'] = min_forecast_df.groupby(['ibes_ticker_pk','fiscal_period_ending'])['analyst'].transform('count')
+    return min_forecast_df
+
+
 
 
 def top_10_brokerage(df):
@@ -182,6 +185,8 @@ def top_10_brokerage(df):
 df_forecast = load_datasets()
 df_forecast = preprocessing_ibes(df_forecast)
 df_forecast = calculate_pmafe(df_forecast)
+df_forecast = collapse_processed_df(df_forecast)
+
 df_forecast = top_10_brokerage(df_forecast)
 print(df_forecast.head(10))
 # data/raw/ibes-forecasts.parquet
