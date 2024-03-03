@@ -88,10 +88,12 @@ def preprocessing_ibes(df:pd.DataFrame):
     # #6 Joins
     # 6.1 Analyst experience 
     # load data
-    df['analyst_year'] = df.announce_date.dt.year
+    df['announce_year'] = df.announce_date.dt.year
+    df['fpedats_year'] = df.fiscal_period_ending.dt.year
+
     experience = pd.read_parquet('data/processed/analyst_experience.parquet')
-    df = pd.merge(left=df, right=experience, how='left', left_on=['analyst','analyst_year'], right_on=['analyst', 'year'])
-    df.drop(columns=['analyst_year', 'year'], inplace=True)
+    df = pd.merge(left=df, right=experience, how='left', left_on=['analyst','announce_year'], right_on=['analyst', 'year'])
+    df.drop(columns=[ 'year'], inplace=True)
 
     return df
 
