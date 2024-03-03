@@ -7,15 +7,16 @@ _How to use the repo_
 ## Model specification
 
 __Draft__:
-$$ACC_{ijt} = \alpha[i] + \beta_{BRSZ} * BRSZ_{ijt}  + \beta_{BCOV} * BCOV_{ijt} + \beta_{EXP} * EXP_{ijt} + \beta_{SURP} * SURP_{ijt} + \beta_{PCOM} * PCOM_{}$$
+$$ACC_{ijt} = \alpha[i] + \beta_{TOPB} * TOPB_{ijt}  + \beta_{BCOV} * BCOV_{ijt} + \beta_{EXP} * EXP_{ijt} + \beta_{SURP} * SURP_{ijt} + \beta_{PCOM} * PCOM_{}$$
 
 where,
-- $ACC_{ijt}$: Proportional Mean Absolute Forecast Error (PMAFE) of analyst i for company j in fiscal year t
-- $BRSZ_{ijt}$: Broker size analyst i works at (belongs to the Top 50) / or log broker size
-- $BCOV_{ijt}$: Coverage as number of analysts at broker of analyst i following company j in fiscal year t
+- $ACC_{ijt}$: Proportional Mean Absolute Forecast Error (PMAFE) of analyst i forecast for company j in fiscal year t
+- $TOPB_{ijt}$: Dummy variable set to 1 if analyst i works at a brokerage that is in the top decile during year t, and 0 otherwise (size by number of analysts at i's brokerage that issued forecasts)
+- $BCOV_{ijt}$: Coverage as number of analysts at analyst i's brokerage following company j in year t
 - $EXP_{ijt}$: Experience of analyst i as number of forecasts issued till current fiscal year t
 - $SURP_{ijt}$: Previous year mean surprise of analyst i issued forecasts for company j in fiscal year t-1 (lag feature)
 - $PCOM_{ijt}$: Portfolio complexity of analyst i, as the number of distinct companies j / industries followed in year t
+- ...
 
 ## Data Sources and Data Guides
 
