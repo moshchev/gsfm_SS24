@@ -15,17 +15,17 @@ pip install poetry
 First you need to navigate to a folder where the repo will be cloned, and then clone it.
 
 ```bash
-cd path\to\folder
+cd path/to/folder
 
 git clone https://github.com/moshchev/gsfm_SS24.git
 ```
-#### Step 3 - Setting up the enviroment
-Navigate inside of the repo and install poetry enviroment
+#### Step 3 - Setting up the Environment
+Navigate inside of the repo and install poetry environment
 
-*note: the poetry env will be installed inside of poetry directory. If you want to have env installed inside of the repo you can modify it with the second line of code in the next block.*
+*Note: the poetry env will be installed inside of poetry directory. If you want to have env installed inside of the repo you can modify it with the second line of code in the next block.*
 
 ```bash
-cd path\to\folder\gsfm_SS24
+cd path/to/folder/gsfm_SS24
 
 poetry config virtualenvs.in-project true
 
