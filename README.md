@@ -30,7 +30,7 @@ poetry install
 ```
 
 #### Step 4 - Run scripts
-##### python scripts
+**python scripts**
 To run a python script you can just say
 ```bash
 poetry run script.py
@@ -41,7 +41,7 @@ or you can spawn a poetry shell and run scripts like in a normal venv
 poetry shell
 python script.py
 ```
-##### jupyter notebooks
+**jupyter notebooks**
 To run a notebook you need to create a jupyter server.
 ``` bash
 poetry run jupyter notebook
