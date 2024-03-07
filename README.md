@@ -7,12 +7,12 @@
 - Python 3.x installed on your system
 - Access to a terminal or command prompt
 
-#### Step 1 - Poetry installation
+#### Step 1 - Poetry Installation
 ```bash
 pip install poetry
 ```
-#### Step 2  - Clone the repository
-First you need to navigate to a folder where the repo will be cloned, and then clone it.
+#### Step – Clone the repository
+First, you need to navigate to a folder where the repo will be cloned, and then clone it.
 
 ```bash
 cd path/to/folder
