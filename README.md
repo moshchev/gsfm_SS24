@@ -2,7 +2,50 @@
 
 ## Introduction
 
-_How to use the repo_
+### Project Setup with Poetry
+#### Prerequisites
+- Python 3.x installed on your system
+- Access to a terminal or command prompt
+
+#### Step 1 - Poetry installation
+```bash
+pip install poetry
+```
+#### Step 2  - Clone the repository
+First you need to navigate to a folder where the repo will be cloned, and then clone it
+```bash
+cd path\to\folder
+
+git clone https://github.com/moshchev/gsfm_SS24.git
+```
+#### Step 3 - Setting up the enviroment
+Navigate inside of the repo and install poetry enviroment
+*note: the poetry env will be installed inside of poetry directory. If you want to have env installed inside of the repo you can modify it with the second line of code provided later.*
+```bash
+cd path\to\folder\gsfm_SS24
+
+poetry config virtualenvs.in-project true
+
+poetry install
+```
+
+#### Step 4 - Run scripts
+##### python scripts
+To run a python script you can just say
+```bash
+poetry run script.py
+```
+or you can spawn a poetry shell and run scripts like in a normal venv
+
+```bash
+poetry shell
+python script.py
+```
+##### jupyter notebooks
+To run a notebook you need to create a jupyter server.
+``` bash
+poetry run jupyter notebook
+```
 
 ## Model specification
 
