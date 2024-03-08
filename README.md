@@ -56,21 +56,24 @@ poetry run jupyter notebook
 
 ## Model specification
 
-__Draft__: (TBD)
-$$Acc_{ijt} = \alpha[i] + \beta_{TOP10} * TOP10_{ijt}  + \beta_{BCOV} * BCOV_{ijt} + \beta_{EXP} * EXP_{ijt} + \beta_{SURP} * SURP_{ijt} + \beta_{PCOM} * PCOM_{}$$
+$$Acc_{ijt} = \alpha[i] + \beta_{BCOV} * BCOV_{ijt} + \beta_{TOP10} * TOP10_{ijt} + \beta_{BSIZE} * BSIZE_{ijt} + \beta_{FOLLW} * FOLLW_{ijt} + \beta_{PCOMC} * PCOMC_{ijt} + \beta_{PCOMI} * PCOMI_{ijt} + \newline
+
+
+\beta_{EXPLOG} * EXPLOG_{ijt} + \beta_{SURPLAG} * SURPLAG_{ijt} + \beta_{COVID} * COVID_{ijt} + \beta_{HORZ} * HORZ_{ijt}$$
 
 where,
 - $ACC_{ijt}$: Proportional Mean Absolute Forecast Error (PMAFE) of analyst i forecast for company j in fiscal year t
-- $BRKZ_{it}$: Number of analysts working at the broker in year t
-- $TOP10_{ijt}$: Dummy variable set to 1 if analyst i works at a brokerage that is in the top decile during fiscal year t, and 0 otherwise (size by number of analysts at i's brokerage that issued forecasts)
-- $HORZ_{ijt}$: Mean forecast horizon of all of analyst i's issued forecast within one fiscal period t
-- $FOLLW_{ijt}$: Number of analysts following the same company j as analyst i in fiscal year t 
+
 - $BCOV_{ijt}$: Coverage as number of analysts at analyst i's brokerage following company j in year t
-- $EXP_{ijt}$: Experience of analyst i as number of forecasts issued till current fiscal year t
-- $SURP_{ijt}$: Previous year mean surprise of analyst i issued forecasts for company j in fiscal year t-1
-- $SURPLA_{ijt}$: Lagged surprise by one period
-- $PCOM_{ijt}$: Portfolio complexity of analyst i, as the number of distinct industries followed in year t
-- $COMP_{it}$: Number of companies followed by analyst i in fiscal year t
+- $TOP10_{ijt}$: Dummy variable set to 1 if analyst i works at a brokerage that is in the top decile during fiscal year t, and 0 otherwise (size by number of analysts at i's brokerage that issued forecasts)
+- $BSIZE_{ijt}$: Number of analysts working at the broker in year t
+- $FOLLW_{ijt}$: Number of analysts following the same company j as analyst i in fiscal year t
+- $PCOMC_{ijt}$: Portfolio complexity of analyst i, as the number of distinct companies followed in year t
+- $PCOMI_{ijt}$: Portfolio complexity of analyst i, as the number of distinct industries followed in year t 
+- $EXPLOG_{ijt}$: Experience logarithm of analyst i as number of forecasts issued till current fiscal year t
+- $SURPLAG_{ijt}$: Lagged surprise by one period (Surpise := Previous year mean surprise of analyst i issued forecasts for company j in fiscal year t-1)
+- $COVID_{ijt}$: Dummy variable to account for fiscal periods affected by Covid
+- $HORZ_{ijt}$: Mean forecast horizon of all of analyst i's issued forecast within one fiscal period t
 
 ## Data Sources and Data Guides
 
