@@ -665,6 +665,20 @@ files = [
 ]
 
 [[package]]
+name = "fuzzywuzzy"
+version = "0.18.0"
+description = "Fuzzy string matching in python"
+optional = false
+python-versions = "*"
+files = [
+    {file = "fuzzywuzzy-0.18.0-py2.py3-none-any.whl", hash = "sha256:928244b28db720d1e0ee7587acf660ea49d7e4c632569cad4f1cd7e68a5f0993"},
+    {file = "fuzzywuzzy-0.18.0.tar.gz", hash = "sha256:45016e92264780e58972dca1b3d939ac864b78437422beecebb3095f8efd00e8"},
+]
+
+[package.extras]
+speedup = ["python-levenshtein (>=0.12)"]
+
+[[package]]
 name = "greenlet"
 version = "3.0.3"
 description = "Lightweight in-process concurrent programming"
@@ -3271,4 +3285,4 @@ sqlalchemy = ">=2,<2.1"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "af95ae5a55c29e15226817bb890ff928b69e5d95defa7f276adf053ae148dc0a"
+content-hash = "9078036d1671e34b90380c8dbfbee97a03ddc5826721281a1d30c9c0ed2dee30"
