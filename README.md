@@ -7,7 +7,7 @@
 - Python 3.x installed on your system
 - Access to a terminal or command prompt
 
-#### Step 1 - Poetry Installation
+#### Step 1 – Poetry Installation
 ```bash
 pip install poetry
 ```
@@ -19,7 +19,7 @@ cd path/to/folder
 
 git clone https://github.com/moshchev/gsfm_SS24.git
 ```
-#### Step 3 - Setting up the Environment
+#### Step 3 – Setting up the Environment
 Navigate inside of the repo and install poetry environment
 
 *Note: the poetry env will be installed inside of poetry directory. If you want to have env installed inside of the repo you can modify it with the second line of code in the next block.*
