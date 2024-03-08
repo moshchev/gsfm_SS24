@@ -11,7 +11,7 @@
 ```bash
 pip install poetry
 ```
-#### Step – Clone the repository
+#### Step 2 – Clone the repository
 First, you need to navigate to a folder where the repo will be cloned, and then clone it.
 
 ```bash
@@ -56,10 +56,7 @@ poetry run jupyter notebook
 
 ## Model specification
 
-$$Acc_{ijt} = \alpha[i] + \beta_{BCOV} * BCOV_{ijt} + \beta_{TOP10} * TOP10_{ijt} + \beta_{BSIZE} * BSIZE_{ijt} + \beta_{FOLLW} * FOLLW_{ijt} + \beta_{PCOMC} * PCOMC_{ijt} + \beta_{PCOMI} * PCOMI_{ijt} + \newline
-
-
-\beta_{EXPLOG} * EXPLOG_{ijt} + \beta_{SURPLAG} * SURPLAG_{ijt} + \beta_{COVID} * COVID_{ijt} + \beta_{HORZ} * HORZ_{ijt}$$
+$$Acc_{ijt} = \alpha[i] + \beta_{BCOV} * BCOV_{ijt} + \beta_{TOP10} * TOP10_{ijt} + \beta_{BSIZE} * BSIZE_{ijt} + \beta_{FOLLW} * FOLLW_{ijt} + \beta_{PCOMC} * PCOMC_{ijt} + \beta_{PCOMI} * PCOMI_{ijt} + \beta_{EXPLOG} * EXPLOG_{ijt} + \beta_{SURPLAG} * SURPLAG_{ijt} + \beta_{COVID} * COVID_{ijt} + \beta_{HORZ} * HORZ_{ijt}$$
 
 where,
 - $ACC_{ijt}$: Proportional Mean Absolute Forecast Error (PMAFE) of analyst i forecast for company j in fiscal year t
